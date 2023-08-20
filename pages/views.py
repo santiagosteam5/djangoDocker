@@ -52,19 +52,16 @@ class ProductIndexView(View):
 class ProductShowView(View):
     template_name = 'products/show.html'
 
-
     def get(self, request, id):
-
         # Check if product id is valid
         try:
             product_id = int(id)
             if product_id < 1:
                 raise ValueError("Product id must be 1 or greater")
-            product = get_object_or_404(Product, pk=product_id)
         except (ValueError, IndexError):
             # If the product id is not valid, redirect to the home page
             return HttpResponseRedirect(reverse('home'))
-        
+       
         viewData = {}
         product = get_object_or_404(Product, pk=product_id)
         viewData["title"] = product.name + " - Online Store"
@@ -117,7 +114,7 @@ class ProductCreateSuccessView(TemplateView):
 class ProductListView(ListView):
     model = Product
     template_name = 'product_list.html'
-    context_object_name = 'products'  # This will allow you to loop through 'products' in your template
+    context_object_name = 'products'  
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

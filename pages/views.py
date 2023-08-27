@@ -6,7 +6,10 @@ from django.urls import reverse
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Product
-from pages.utils import ImageLocalStorage
+from pages.utils import ImageLocalStorage, ImagesGCPStorage, ImagesLocalStorage, ImageProvider
+from google.cloud import storage as gcs_storage
+from django.conf import settings
+from django.core.files.storage import default_storage
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -199,3 +202,87 @@ class ImageViewNoDI(View):
         request.session['image_url'] = image_url
 
         return redirect('imagenodi_index')
+    
+
+class ImageBasicView(View):
+    template_name = 'imagesbasic/index.html'
+
+    def get(self, request):
+        image_url = request.session.get('image_url', '')
+        
+        return render(request, self.template_name, {'image_url': image_url})
+
+    def post(self, request):
+        storage_type = request.POST.get('storage')
+
+        if 'profile_image' in request.FILES:
+            if storage_type == 'local':
+                # Local storage
+                profile_image = request.FILES.get('profile_image')
+                if profile_image:
+                    # Store the image
+                    file_name = default_storage.save('uploaded_images/' + profile_image.name, profile_image)
+                    image_url = default_storage.url(file_name)
+                    request.session['image_url'] = image_url
+                
+            elif storage_type == 'gcp':
+                # GCP storage
+                profile_image = request.FILES['profile_image']
+                client = gcs_storage.Client.from_service_account_json(settings.GCP_KEY_FILE)
+                bucket = client.bucket(settings.GCP_BUCKET)
+                blob = bucket.blob('images/test.png')
+                blob.upload_from_file(profile_image)
+
+        return HttpResponseRedirect(reverse('imagebasic_index'))
+
+
+class ImageNotDIView(View):
+    template_name = 'imagesnodi/index.html'
+
+    def get(self, request):
+        image_url = request.session.get('image_url', '')
+        
+        return render(request, self.template_name, {'image_url': image_url})
+
+    def post(self, request):
+        storage_type = request.POST.get('storage')
+
+        if 'profile_image' in request.FILES:
+            profile_image = request.FILES.get('profile_image')
+            if storage_type == 'local':
+                # Local storage
+                handler = ImagesLocalStorage()
+                
+            elif storage_type == 'gcp':
+                # GCP storage
+                handler = ImagesGCPStorage()
+
+            image_url = handler.store(profile_image)
+            if image_url:
+                request.session['image_url'] = image_url
+
+        return HttpResponseRedirect(reverse('imagesnodi_index'))
+    
+class ImageDIView(View):
+    template_name = 'imagesdi/index.html'
+
+    def get(self, request):
+        image_url = request.session.get('image_url', '')
+        
+        return render(request, self.template_name, {'image_url': image_url})
+
+    def post(self, request):
+        storage_type = request.POST.get('storage')
+        profile_image = request.FILES.get('profile_image')
+        provider = ImageProvider()
+        if not profile_image:
+            return HttpResponseRedirect(reverse('imagesdi_index'))
+
+        imageStorage = provider.get_instance(storage_type)
+        image_url = imageStorage.store(profile_image)
+
+        if image_url:
+            request.session['image_url'] = image_url
+
+        return HttpResponseRedirect(reverse('imagesdi_index'))
+

@@ -33,14 +33,6 @@ class AboutPageView(TemplateView):
         return context
 
 
-# class Product:
-#     products = [
-#         {"id":"1", "name":"TV", "description":"Best TV", "price":50},
-#         {"id":"2", "name":"iPhone", "description":"Best iPhone", "price":150},
-#         {"id":"3", "name":"Chromecast", "description":"Best Chromecast", "price":80},
-#         {"id":"4", "name":"Glasses", "description":"Best Glasses", "price":30}
-#     ]
-
 class ProductIndexView(View):
     template_name = 'products/index.html'
 
@@ -76,8 +68,6 @@ class ProductShowView(View):
     
 
 class ProductForm(forms.ModelForm):
-    # name = forms.CharField(required=True)
-    # price = forms.FloatField(required=True)
     class Meta:
         model = Product
         fields = ['name', 'price']
@@ -173,36 +163,6 @@ class CartRemoveAllView(View):
         return redirect('cart_index')
 
 
-def ImageViewFactory(image_storage):
-    class ImageView(View):
-        template_name = 'images/index.html'
-
-        def get(self, request):
-            image_url = request.session.get('image_url', '')
-            return render(request, self.template_name, {'image_url': image_url})
-
-        def post(self, request):
-            image_url = image_storage.store(request)
-            request.session['image_url'] = image_url
-            return redirect('image_index')
-
-    return ImageView
-
-class ImageViewNoDI(View):
-    template_name = 'imagesnotdi/index.html'
-
-    def get(self, request):
-        image_url = request.session.get('image_url', '')
-        
-        return render(request, self.template_name, {'image_url': image_url})
-
-    def post(self, request):
-        image_storage = ImageLocalStorage()
-        image_url = image_storage.store(request)
-        request.session['image_url'] = image_url
-
-        return redirect('imagenodi_index')
-    
 
 class ImageBasicView(View):
     template_name = 'imagesbasic/index.html'
@@ -225,44 +185,19 @@ class ImageBasicView(View):
                     image_url = default_storage.url(file_name)
                     request.session['image_url'] = image_url
                 
-            elif storage_type == 'gcp':
-                # GCP storage
-                profile_image = request.FILES['profile_image']
-                client = gcs_storage.Client.from_service_account_json(settings.GCP_KEY_FILE)
-                bucket = client.bucket(settings.GCP_BUCKET)
-                blob = bucket.blob('images/test.png')
-                blob.upload_from_file(profile_image)
+            # elif storage_type == 'gcp':
+            #     # GCP storage
+            #     profile_image = request.FILES['profile_image']
+            #     client = gcs_storage.Client.from_service_account_json(settings.GCP_KEY_FILE)
+            #     bucket = client.bucket(settings.GCP_BUCKET)
+            #     blob = bucket.blob('images/test.png')
+            #     blob.upload_from_file(profile_image)
+            else:
+                 return HttpResponseRedirect(reverse('imagebasic_index'))
+
 
         return HttpResponseRedirect(reverse('imagebasic_index'))
 
-
-class ImageNotDIView(View):
-    template_name = 'imagesnodi/index.html'
-
-    def get(self, request):
-        image_url = request.session.get('image_url', '')
-        
-        return render(request, self.template_name, {'image_url': image_url})
-
-    def post(self, request):
-        storage_type = request.POST.get('storage')
-
-        if 'profile_image' in request.FILES:
-            profile_image = request.FILES.get('profile_image')
-            if storage_type == 'local':
-                # Local storage
-                handler = ImagesLocalStorage()
-                
-            elif storage_type == 'gcp':
-                # GCP storage
-                handler = ImagesGCPStorage()
-
-            image_url = handler.store(profile_image)
-            if image_url:
-                request.session['image_url'] = image_url
-
-        return HttpResponseRedirect(reverse('imagesnodi_index'))
-    
 class ImageDIView(View):
     template_name = 'imagesdi/index.html'
 

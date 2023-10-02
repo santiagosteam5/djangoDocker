@@ -6,8 +6,8 @@ from django.urls import reverse
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Product
-from pages.utils import ImageLocalStorage, ImagesGCPStorage, ImagesLocalStorage, ImageProvider
-from google.cloud import storage as gcs_storage
+from pages.utils import ImageLocalStorage, ImagesLocalStorage, ImageProvider
+# from google.cloud import storage as gcs_storage
 from django.conf import settings
 from django.core.files.storage import default_storage
 

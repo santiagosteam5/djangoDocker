@@ -1,11 +1,5 @@
-version: '3.9'
-
+version: '3'
 services:
-  django:
-    image: django-docker:0.0.1
-    build: .
-    ports:
-      - "8000:8000"
   db:
     image: mysql:8
     ports:
@@ -14,7 +8,6 @@ services:
       - MYSQL_DATABASE='djangoproject'
       - MYSQL_USER='root'
       - MYSQL_PASSWORD='123456789'
-      - MYSQL_ROOT_PASSWORD='123456789'
       - MYSQL_HOST='104.154.102.101'
     volumes:
       - /tmp/app/mysqld:/var/run/mysqld

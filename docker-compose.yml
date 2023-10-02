@@ -22,11 +22,11 @@ services:
   web:
     container_name: django-web
     build:
-      context: ./app
+      context: ./code
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./app/:/usr/src/app/
+      - ./code/:/usr/src/code/
     env_file:
       - ./.env.dev
     ports:

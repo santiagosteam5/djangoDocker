@@ -6,3 +6,26 @@ services:
     build: .
     ports:
       - "8000:8000"
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE='djangoproject'
+      - MYSQL_USER='root'
+      - MYSQL_PASSWORD='123456789'
+      - MYSQL_ROOT_PASSWORD='123456789'
+      - MYSQL_HOST='104.154.102.101'
+    volumes:
+      - /tmp/app/mysqld:/var/run/mysqld
+      - ./db:/var/lib/mysql
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /tmp/app/mysqld:/run/mysqld
+    depends_on:
+      - db

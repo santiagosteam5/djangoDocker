@@ -10,6 +10,7 @@ services:
       - MYSQL_USER='nram94'
       - MYSQL_PASSWORD='123456789'
       - MYSQL_HOST='104.154.102.101'
+      - MYSQL_ROOT_PASSWORD='123456789'
     volumes:
       - /tmp/code/mysqld:/var/run/mysqld
       - ./db:/var/lib/mysql

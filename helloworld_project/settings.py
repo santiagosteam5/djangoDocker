@@ -130,15 +130,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 IMAGE_STORAGE_CLASS = 'pages.utils.ImageLocalStorage'
-GCP_STORAGE_CLASS = 'pages.utils.ImageGCPStorage'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-SESSION_COOKIE_AGE = 1200  # 30 minutes
-
-GOOGLE_APPLICATION_CREDENTIALS = os.path.join(BASE_DIR, 'path/to/your/keyfile.json')
-GCP_KEY_FILE = 'path/to/your/service_account_key.json'
-GCP_BUCKET = 'your-bucket-name'

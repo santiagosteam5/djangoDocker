@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'djangoproject',
         'USER': 'admin',
         'PASSWORD': '5AmrrWDc3JNX9Vx',
-        'HOST': '104.154.102.101',
+        'HOST': 'teis20251.cpsc8aigcnqs.us-east-1.rds.amazonaws.com',
         'PORT': '3306'
     }
 }

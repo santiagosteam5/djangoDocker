@@ -79,10 +79,10 @@ WSGI_APPLICATION = 'helloworld_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangoproject',
+        'NAME': 'djangodocker',
         'USER': 'admin',
-        'PASSWORD': '5AmrrWDc3JNX9Vx',
-        'HOST': 'teis20251.cpsc8aigcnqs.us-east-1.rds.amazonaws.com',
+        'PASSWORD': 'sgomez13A!*',
+        'HOST': 'teis20251.csnl9zbs1yby.us-east-1.rds.amazonaws.com',
         'PORT': '3306'
     }
 }
